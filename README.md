@@ -3,11 +3,13 @@
 ### Motivation
 At [RollCredits](https://www.rollcredits.io/) we have all come to the conclusion that try / catch causes more headaches than it's worth, and wanted a good error as values system to use in its place.
 
-The current libraries for doing so all seem to have verbose and cumbersome APIs that do stuff like wrapping all returns with class instances with methods such as "isOk" or "isErr.
+Any error-as-values library in typescript is liable for being used *a lot* within any project which adds it, so making the API as convenient as humanly possible was our primary concern.
+
+The alternative libraries for doing so all seem to have verbose and cumbersome APIs that do stuff like wrapping all returns with class instances, and asking you to call their methods such as "isOk" or "isErr to work with them
 
 Instead of this, we leverage typescript's discriminated unions to handle most of the heavy lifting for us. This greatly (in our opinion) reduces how cumbersome the API is to use.
 
-On top of that, having the ability to optionally import this package into your project's global scope also reduces friction, as the types and functions in this library is one you'll probably be using in almost every file.
+On top of that, having the option to import the functions and types of this package into your project's global scope also reduces friction.
 
 ---
 
