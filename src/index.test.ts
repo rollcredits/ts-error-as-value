@@ -1,5 +1,5 @@
 import { err, Err, Ok, ok } from "../src";
-import { isErrorResult } from "../src/error-result";
+import { isErrorResult } from "./error-result";
 
 
 describe("Result", () => {

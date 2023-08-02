@@ -31,11 +31,11 @@
   },
   "compileOnSave": false,
   "include": [
-    "globals.d.ts",
     "src/**/*.ts"
   ],
   "exclude": [
     "node_modules",
-    "./types"
+    "./types",
+    "src/**/*.unit.test.ts"
   ]
 }

@@ -1,7 +1,7 @@
 
 
 // Using Jest for the tests
-import { ErrorResult, isErrorResult } from "../src/error-result";
+import { ErrorResult, isErrorResult } from "./error-result";
 
 describe("ErrorResult", () => {
 
@@ -10,7 +10,9 @@ describe("ErrorResult", () => {
     const standardError = new Error("Standard Error");
     const result = ErrorResult.fromError$$$(standardError);
     expect(isErrorResult(result)).toBeTruthy();
-    expect(result.errorStack).toEqual([ standardError ]);
+    if (isErrorResult(result)) {
+      expect(result.errorStack).toEqual([ standardError ]);
+    }
   });
 
   // Testing the fromExistingResult$$$ method
@@ -38,9 +40,12 @@ describe("ErrorResult", () => {
   test("new$$$ should create a new ErrorResult with the provided errors", () => {
     const error1 = new Error("Error 1");
     const error2 = ErrorResult.new$$$();
+    expect(isErrorResult(error2)).toBeTruthy();
     const result = ErrorResult.new$$$(error1, error2);
     expect(isErrorResult(result)).toBeTruthy();
-    expect(result.errorStack).toEqual([ error1, ...error2.errorStack ]);
+    if (isErrorResult(result) && isErrorResult(error2)) {
+      expect(result.errorStack).toEqual([ error1, ...error2.errorStack ]);
+    }
   });
 
 });

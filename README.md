@@ -63,11 +63,25 @@ type Result<T, E extends Error = ErrorResult> =
 ```ts
 function err<E extends Error>(error: E): Err<E>;
 function ok<T>(data: T): Ok<T>;
+
+// When the function wrapped returns a promise
+function withResult<T, E extends Error, R>(
+  fn: (...args: T[]) => Promise<R>
+): (
+  ...args: T[]
+) => Promise<Result<R, E>>
+
+// When the function wrapped does not return a promise
+function withResult<T, E extends Error, R>(
+  fn: (...args: T[]) => R
+): (
+  ...args: T[]
+) => Result<R, E>
 ```
 
 ---
 
-### Basic Usage
+## ok and err - Basic Usage
 *Wrap the returns from functions with err for errors, and ok for non-error so that the function calling it receives a Result type.*
 
 ```ts
@@ -138,3 +152,25 @@ const callsFnThatCallsFnWithResult = async (): Promise<Result<boolean, NewError>
   return ok(data);
 };
 ```
+
+---
+
+## withResult
+*Function which wraps another function and returns an Err result if the wrapped function throws an error,
+ and returns an Ok result if the wrapped function does not.*
+
+```ts
+import somePkg from "package-that-throws-errors";
+
+const doStuff = withResult(somePkg.doStuff);
+
+const { data, error } = await doStuff("hello");
+
+if (error) {
+  // the function doStuff in the package threw an error
+}
+```
+
+
+
+
