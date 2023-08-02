@@ -1,6 +1,6 @@
 {
   "name": "ts-error-as-value",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "main": "lib/index.ts",
   "types": "lib/index.d.ts",
