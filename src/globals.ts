@@ -1,7 +1,7 @@
 import { ok, err } from ".";
 import { withResult } from "./with-result";
 
-if (typeof window !== "undefined" || (process as any).browser) {
+if (typeof window !== "undefined") {
   (window as any).ok = ok;
   (window as any).err = err;
   (window as any).withResult = withResult;
