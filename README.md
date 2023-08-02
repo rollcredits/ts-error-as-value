@@ -5,11 +5,11 @@ At [RollCredits](https://www.rollcredits.io/) we have all come to the conclusion
 
 Any error-as-values library in typescript is liable for being used *a lot* within any project which adds it, so making the API as convenient as humanly possible was our primary concern.
 
-The alternative typescript libraries for doing achieving errors-as-values all seem to have verbose and cumbersome APIs, often wrapping all returns with class instances, and asking you to call method on them such as "isOk" or "isErr" to function.
+The alternative typescript libraries for achieving errors-as-values all seem to have verbose and cumbersome APIs, often wrapping all returns with class instances, and asking you to call method on them such as "isOk" or "isErr" to function.
 
 Instead of this, we leverage typescript's discriminated unions to handle most of the heavy lifting for us. This greatly (in our opinion) reduces how cumbersome the API is to use.
 
-On top of that, having the option to import the functions and types of this package into your project's global scope also reduces friction.
+To further decrease friction for using this in your project, We have also included the ability to import the functions and types of this package into your project's global scope.
 
 ---
 
@@ -27,6 +27,10 @@ import "ts-error-as-value/lib/globals";
 This will make the functions ok, err and withResult, as well as the types Ok, Err and Result globally available
 
 ---
+
+## ok and err - Basic Usage
+*Wrap the returns from functions with err for errors, and ok for non-error so that the function calling it receives a Result type.*
+
 ```ts
 const { data, error } = ok("Hello");
 if (error) {
@@ -46,9 +50,6 @@ if (error) {
 ```
 ---
 
-## ok and err - Basic Usage
-*Wrap the returns from functions with err for errors, and ok for non-error so that the function calling it receives a Result type.*
-
 ```ts
 const fnWithResult = (): Result<string, Error> => {
   if ("" !== "") {
@@ -62,7 +63,7 @@ const { data, error } = fnWithResult();
 if (error) {
   // is an error
 } else {
-  // guaranteed to not be an error, and typescript knows this
+  // data is guaranteed to be a string here, and error is guaranteed to be null
 }
 ```
 
@@ -105,9 +106,9 @@ const fnWithResult = (): Result<string, Error> => {
 
 const callsFnThatCallsFnWithResult = async (): Promise<Result<boolean, NewError>> => {
   const { data, error } = fnWithResult()
-    // Error will be an instance of NewError if fnWithResult returns an error
+    // Because of using mapErr below, error will be an instance of NewError if fnWithResult returns an error
     .mapErr(error => new NewError("Failed to call fnWithResult"))
-    // Data will be boolean if fnWithResult returns a value.
+    // Because of using andThen below, data will be boolean if fnWithResult returns a value.
     .andThen(data => {
       return data === "hello";
     });
