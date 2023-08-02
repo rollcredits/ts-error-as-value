@@ -153,8 +153,8 @@ const { errorStack } = fn2();
 would produce
 ```json
  [
-   { message: "Hello", stack: "..." },
-   { message: "World", stack: "..." }
+   { "message": "Hello", "stack": "..." },
+   { "message": "World", "stack": "..." }
  ]
 ```
 

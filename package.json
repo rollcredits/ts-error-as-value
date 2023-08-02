@@ -1,6 +1,6 @@
 {
   "name": "ts-error-as-value",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Errors as values in typescript",
   "main": "lib/index.ts",
   "keywords": ["result", "option", "rust", "kotlin", "errors", "errors as values", "typescript"],
