@@ -29,7 +29,7 @@ This will make the functions ok, err and withResult, as well as the types Ok, Er
 ---
 
 ## ok and err - Basic Usage
-*Creating Ok and Err result objects*
+Creating `Ok` and `Err` result objects
 ```ts
 const { data, error } = ok("Hello");
 if (error) {
@@ -49,7 +49,7 @@ if (error) {
 ```
 ---
 
-*Wrapping the returns from functions with `err` for errors, and `ok` for non-error so that the function calling it receives a `Result` type.*
+Wrapping the returns from functions with `err` for errors, and `ok` for non-error so that the function calling it receives a `Result` type.
 
 ```ts
 const fnWithResult = (): Result<string, Error> => {
@@ -67,8 +67,6 @@ if (error) {
   // data is guaranteed to be a string here, and error is guaranteed to be null
 }
 ```
-
----
 
 Or with promises:
 
@@ -123,10 +121,10 @@ const callsFnThatCallsFnWithResult = async (): Promise<Result<boolean, NewError>
 ---
 
 ## withResult
-*Function which wraps another function and returns an Err result if the wrapped function throws an error,
- oran Ok result if the wrapped function does not.*
+*One downside to using a system where errors are treated as values in javascript is that you have no control over whether a third party dependency will throw errors or not. As a result, we need a way to wrap functions that can throw errors and force them to return a result for us.*
 
-One downside to using a system where errors are treated as values in javascript is that you have no control over whether a third party dependency will throw errors or not. As a result, we need a way to wrap functions that can throw errors and force them to return a result for us.
+withResult is a function which wraps another function and returns an `Err` result if the wrapped function throws an error,
+ or an `Ok` result if the wrapped function does not.
 ```ts
 import somePkg from "package-that-throws-errors";
 
@@ -172,9 +170,6 @@ type Result<T, E extends Error = ErrorResult> =
 
 ```
 
----
-
-### Functions
 ```ts
 function err<E extends Error>(error: E): Err<E>;
 function ok<T>(data: T): Ok<T>;
