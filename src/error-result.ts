@@ -80,8 +80,8 @@ export class ErrorResult extends Error {
     return newLines.join("\n");
   }
 
-  static fromError$$$(error: Error): ErrorResult {
-    return ErrorResult.new$$$(error);
+  static fromError$$$<E extends Error>(error: E): E {
+    return ErrorResult.new$$$(error) as unknown as E;
   }
 
   static getAnonymousError$$$(): Error {
@@ -89,11 +89,11 @@ export class ErrorResult extends Error {
     error.stack = ErrorResult.getCurrentStackLocation$$$();
     return error;
   }
-  static fromExistingResult$$$(existingError: ErrorResult): ErrorResult {
-    return ErrorResult.new$$$(existingError, ErrorResult.getAnonymousError$$$());
+  static fromExistingResult$$$<E extends Error>(existingError: E): E {
+    return ErrorResult.new$$$(existingError, ErrorResult.getAnonymousError$$$()) as unknown as E;
   }
-  static new$$$(...errors: Array<ErrorResult | Error>): ErrorResult {
-    return new ErrorResult(...errors.length ? errors : [ ErrorResult.getAnonymousError$$$() ]);
+  static new$$$<E extends Error>(...errors: Array<ErrorResult | Error>): E {
+    return new ErrorResult(...errors.length ? errors : [ ErrorResult.getAnonymousError$$$() ]) as unknown as E;
   }
 
   static newFromMethod$$$(methodName: ErrOkMethods, ...errors: Array<ErrorResult | Error>): ErrorResult {

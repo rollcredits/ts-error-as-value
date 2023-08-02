@@ -52,7 +52,7 @@ type Result<
 
 ### Functions
 ```ts
-const err: <E extends Error>(error: E) => Err<None>;
+const err: <E extends Error>(error: E) => Err<E>;
 const ok: <T>(data: T) => Ok<T>;
 ```
 

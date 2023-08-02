@@ -28,7 +28,7 @@ export type Result<
 
 export const err = <E extends Error>(
   error: E
-): Err<None> => {
+): Err<None, E> => {
   if (isErrorResult(error)) {
     return {
       data: null as never,
@@ -40,12 +40,12 @@ export const err = <E extends Error>(
         throw error;
       },
       mapErr<E2 extends Error>(fn: (err: E) => E2): Err<None, E2> {
-        return err(ErrorResult.new$$$(error, fn(error))) as Err<None, E2>;
+        return err<E2>(ErrorResult.new$$$(error, fn(error))) as Err<None, E2>;
       },
       unwrapOr<D>(defaultValue: D): D {
         return defaultValue;
       },
-      andThen(): Err<None> {
+      andThen(): Err<None, E> {
         return err(error);
       }
     };
@@ -55,6 +55,9 @@ export const err = <E extends Error>(
     data: null as never,
     error: errorResult,
     get errorStack() {
+      if (!isErrorResult(errorResult)) {
+        return [];
+      }
       return errorResult.errorStack;
     },
     unwrap() {
@@ -66,7 +69,7 @@ export const err = <E extends Error>(
     unwrapOr<D>(defaultValue: D): D {
       return defaultValue;
     },
-    andThen(): Err<None> {
+    andThen(): Err<None, E> {
       return err(error);
     }
   };
@@ -78,7 +81,7 @@ export const ok = <T>(
   data,
   error: null as never,
   get errorStack() {
-    return null as never;
+    return [] as never;
   },
   unwrap(): T {
     return data;
