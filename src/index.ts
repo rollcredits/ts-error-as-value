@@ -97,3 +97,25 @@ export const ok = <T>(
   }
 });
 
+class NewError extends Error {}
+
+const fnWithResult = (): Result<string, Error> => {
+  if ("" !== "") {
+    return ok("hello");
+  }
+  return err(new Error("Method failed"));
+};
+
+const callsFnThatCallsFnWithResult = async (): Promise<Result<boolean, NewError>> => {
+  const { data, error } = fnWithResult()
+    // Error will be an instance of NewError if fnWithResult returns an error
+    .mapErr(error => new NewError("Failed to call fnWithResult"))
+    // Data will be boolean if fnWithResult returns a value.
+    .andThen(data => {
+      return data === "hello";
+    });
+  if (error) {
+    return err(error);
+  }
+  return ok(data);
+};
