@@ -5,7 +5,7 @@ At [RollCredits](https://www.rollcredits.io/) we have all come to the conclusion
 
 Any error-as-values library in typescript is liable for being used *a lot* within any project which adds it, so making the API as convenient as humanly possible was our primary concern.
 
-The alternative libraries for doing so all seem to have verbose and cumbersome APIs that do stuff like wrapping all returns with class instances, and asking you to call their methods such as "isOk" or "isErr to work with them
+The alternative typescript libraries for doing achieving errors-as-values all seem to have verbose and cumbersome APIs, often wrapping all returns with class instances, and asking you to call method on them such as "isOk" or "isErr" to function.
 
 Instead of this, we leverage typescript's discriminated unions to handle most of the heavy lifting for us. This greatly (in our opinion) reduces how cumbersome the API is to use.
 
