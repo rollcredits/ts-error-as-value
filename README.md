@@ -68,7 +68,7 @@ function ok<T>(data: T): Ok<T>;
 ---
 
 ### Basic Usage
-*Wrap the returns from functions with err for errors, and ok for non-error returns so that the function calling it receives a Result type.*
+*Wrap the returns from functions with err for errors, and ok for non-error so that the function calling it receives a Result type.*
 
 ```ts
 const fnWithResult = (): Result<string, Error> => {
