@@ -1,13 +1,13 @@
 ### Typescript error as value
 
 ### Motivation
-At [RollCredits](https://www.rollcredits.io/) we have all come to the conclusion that try / catch *really* sucks and wanted a good error as values system to use in its place.
+At [RollCredits](https://www.rollcredits.io/) we have all come to the conclusion that try / catch causes more headaches than it's worth, and wanted a good error as values system to use in its place.
 
-The current libraries for doing so all seem to have verbose and cumbersome APIs that do stuff like wrapping all returns with class instances which have methods such as "isOk" or "isErr.
+The current libraries for doing so all seem to have verbose and cumbersome APIs that do stuff like wrapping all returns with class instances with methods such as "isOk" or "isErr.
 
-Instead of this, leveraging typescript's type engine to do more of the heavy lifting here by using discriminated unions between the Error and Non-Error states in a Result instead, greatly (in our opinion) reducing how cumbersome the API is to use.
+Instead of this, we leverage typescript's discriminated unions to handle most of the heavy lifting for us. This greatly (in our opinion) reduces how cumbersome the API is to use.
 
-On top of that, having the ability to optionally import this package into your project's global scope was also important for us, as the types and functions in this library is one you'll probably be using in almost every file.
+On top of that, having the ability to optionally import this package into your project's global scope also reduces friction, as the types and functions in this library is one you'll probably be using in almost every file.
 
 ---
 
@@ -63,22 +63,23 @@ type Result<T, E extends Error = ErrorResult> =
 ```ts
 function err<E extends Error>(error: E): Err<E>;
 function ok<T>(data: T): Ok<T>;
+```
 
-// When the function wrapped returns a promise
+```ts
+// When the wrapped function returns a promise
 function withResult<T, E extends Error, R>(
   fn: (...args: T[]) => Promise<R>
 ): (
   ...args: T[]
 ) => Promise<Result<R, E>>
 
-// When the function wrapped does not return a promise
+// When the wrapped function does not return a promise
 function withResult<T, E extends Error, R>(
   fn: (...args: T[]) => R
 ): (
   ...args: T[]
 ) => Result<R, E>
 ```
-
 ---
 
 ## ok and err - Basic Usage
@@ -159,6 +160,7 @@ const callsFnThatCallsFnWithResult = async (): Promise<Result<boolean, NewError>
 *Function which wraps another function and returns an Err result if the wrapped function throws an error,
  and returns an Ok result if the wrapped function does not.*
 
+One downside to using a system where errors are treated as values in javascript is that you have no control over whether a third party dependency will throw errors or not. As a result, we need a way to wrap functions that can throw errors and force them to return a result for us.
 ```ts
 import somePkg from "package-that-throws-errors";
 
