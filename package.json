@@ -1,6 +1,6 @@
 {
   "name": "ts-error-as-value",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "main": "lib/index.ts",
   "types": "lib/index.d.ts",
@@ -10,6 +10,8 @@
     "test": "jest",
     "postinstall": "npx tsc && node cp.js"
   },
+  "repository": "https://github.com/rollcredits/ts-error-as-value",
+  "readme": "https://github.com/rollcredits/ts-error-as-value#readme",
   "author": "Charles Anderson",
   "license": "ISC",
   "dependencies": {},
@@ -28,7 +30,6 @@
     "eslint-plugin-jsdoc": "^39.3.6",
     "eslint-plugin-no-null": "^1.0.2",
     "jest": "^29.2.0",
-    "node-fetch": "^2.6.0",
     "prettier": "^2.7.1",
     "ts-jest": "^29.0.3",
     "ts-node": "latest",
