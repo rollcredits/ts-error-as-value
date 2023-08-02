@@ -2,25 +2,24 @@ import { ErrorResult, isErrorResult } from "./error-result";
 
 export type None = null;
 
-
 export type Err<T, E extends Error = Error> = {
   data: never,
   error: E,
   get errorStack(): Error[],
-  unwrap(): void,
-  unwrapOr<D>(defaultValue: D): D,
-  mapErr<E2 extends Error>(fn: (err: E) => E2): Err<T, E2>,
-  andThen<N>(fn: (data: never) => N): Err<T, E>
+  unwrap(): void, // Returns the value, but throws an error if the result is an Error
+  unwrapOr<D>(defaultValue: D): D, // Returns the value or gives you a default value if it's an error
+  mapErr<E2 extends Error>(fn: (err: E) => E2): Err<T, E2>, // If the result is an error, map the error to another error
+  andThen<N>(fn: (data: never) => N): Err<T, E> // If the result is not an error, map the data in it
 };
 
 export type Ok<T> = {
   data: T,
   error: never,
   get errorStack(): never,
-  unwrap(): T,
-  unwrapOr<D>(defaultValue: D): T,
-  mapErr<E2 extends Error>(fn: (err: never) => E2): Ok<T>,
-  andThen<N>(fn: (data: T) => N): Ok<N>
+  unwrap(): T, // Returns the value, but throws an error if the result is an Error
+  unwrapOr<D>(defaultValue: D): T, // Returns the value or gives you a default value if it's an error
+  mapErr<E2 extends Error>(fn: (err: never) => E2): Ok<T>, // If the result is an error, map the error to another error
+  andThen<N>(fn: (data: T) => N): Ok<N> // If the result is not an error, map the data in it
 };
 
 export type Result<
@@ -40,8 +39,8 @@ export const err = <E extends Error>(
       unwrap(): void {
         throw error;
       },
-      mapErr<E2 extends Error>(fn: (err: E) => E2): Err<null, E2> {
-        return err(ErrorResult.new$$$(error, fn(error))) as Err<null, E2>;
+      mapErr<E2 extends Error>(fn: (err: E) => E2): Err<None, E2> {
+        return err(ErrorResult.new$$$(error, fn(error))) as Err<None, E2>;
       },
       unwrapOr<D>(defaultValue: D): D {
         return defaultValue;
@@ -61,8 +60,8 @@ export const err = <E extends Error>(
     unwrap() {
       throw error;
     },
-    mapErr<E2 extends Error>(fn: (err: E) => E2): Err<null, E2> {
-      return err(ErrorResult.new$$$(error, fn(error))) as Err<null, E2>;
+    mapErr<E2 extends Error>(fn: (err: E) => E2): Err<None, E2> {
+      return err(ErrorResult.new$$$(error, fn(error))) as Err<None, E2>;
     },
     unwrapOr<D>(defaultValue: D): D {
       return defaultValue;
