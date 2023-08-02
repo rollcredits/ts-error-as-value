@@ -24,63 +24,25 @@ yarn install ts-error-as-value
 ```ts
 import "ts-error-as-value/lib/globals";
 ```
-This will make the functions ok and err, as well as the types Ok, Err and Result globally available
+This will make the functions ok, err and withResult, as well as the types Ok, Err and Result globally available
 
 ---
-
-### Result type
-
-```typescript
-type None = null;
-
-type Err<T, E extends Error = Error> = {
-  data: never,
-  error: E,
-  get errorStack(): Error[],
-  unwrap(): void, // Returns the value, but throws an error if the result is an Error
-  unwrapOr<D>(defaultValue: D): D, // Returns the value or gives you a default value if it's an error
-  mapErr<E2 extends Error>(fn: (err: E) => E2): Err<T, E2>, // If the result is an error, map the error to another error
-  andThen<N>(fn: (data: never) => N): Err<T, E> // If the result is not an error, map the data in it
-};
-
-type Ok<T> = {
-  data: T,
-  error: never,
-  get errorStack(): never,
-  unwrap(): T, // Returns the value, but throws an error if the result is an Error
-  unwrapOr<D>(defaultValue: D): T, // Returns the value or gives you a default value if it's an error
-  mapErr<E2 extends Error>(fn: (err: never) => E2): Ok<T>, // If the result is an error, map the error to another error
-  andThen<N>(fn: (data: T) => N): Ok<N> // If the result is not an error, map the data in it
-};
-
-type Result<T, E extends Error = ErrorResult> = 
-  | Err<T, E>
-  | Ok<T>;
-
-```
-
----
-
-### Functions
 ```ts
-function err<E extends Error>(error: E): Err<E>;
-function ok<T>(data: T): Ok<T>;
+const { data, error } = ok("Hello");
+if (error) {
+  // do something with error
+} else {
+  // do something with data
+}
 ```
-
+or
 ```ts
-// When the wrapped function returns a promise
-function withResult<T, E extends Error, R>(
-  fn: (...args: T[]) => Promise<R>
-): (
-  ...args: T[]
-) => Promise<Result<R, E>>
-
-// When the wrapped function does not return a promise
-function withResult<T, E extends Error, R>(
-  fn: (...args: T[]) => R
-): (
-  ...args: T[]
-) => Result<R, E>
+const { data, error } = err(new Error("Error"));
+if (error) {
+  // do something with error
+} else {
+  // do something with data
+}
 ```
 ---
 
@@ -174,6 +136,63 @@ if (error) {
   // the function doStuff in the package threw an error
 }
 ```
+
+---
+## Result type
+
+```typescript
+type None = null;
+
+type Err<T, E extends Error = Error> = {
+  data: never,
+  error: E,
+  get errorStack(): Error[],
+  unwrap(): void, // Returns the value, but throws an error if the result is an Error
+  unwrapOr<D>(defaultValue: D): D, // Returns the value or gives you a default value if it's an error
+  mapErr<E2 extends Error>(fn: (err: E) => E2): Err<T, E2>, // If the result is an error, map the error to another error
+  andThen<N>(fn: (data: never) => N): Err<T, E> // If the result is not an error, map the data in it
+};
+
+type Ok<T> = {
+  data: T,
+  error: never,
+  get errorStack(): never,
+  unwrap(): T, // Returns the value, but throws an error if the result is an Error
+  unwrapOr<D>(defaultValue: D): T, // Returns the value or gives you a default value if it's an error
+  mapErr<E2 extends Error>(fn: (err: never) => E2): Ok<T>, // If the result is an error, map the error to another error
+  andThen<N>(fn: (data: T) => N): Ok<N> // If the result is not an error, map the data in it
+};
+
+type Result<T, E extends Error = ErrorResult> = 
+  | Err<T, E>
+  | Ok<T>;
+
+```
+
+---
+
+### Functions
+```ts
+function err<E extends Error>(error: E): Err<E>;
+function ok<T>(data: T): Ok<T>;
+```
+
+```ts
+// When the wrapped function returns a promise
+function withResult<T, E extends Error, R>(
+  fn: (...args: T[]) => Promise<R>
+): (
+  ...args: T[]
+) => Promise<Result<R, E>>
+
+// When the wrapped function does not return a promise
+function withResult<T, E extends Error, R>(
+  fn: (...args: T[]) => R
+): (
+  ...args: T[]
+) => Result<R, E>
+```
+---
 
 
 
