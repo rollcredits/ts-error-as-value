@@ -8,17 +8,17 @@ describe("ErrorResult", () => {
   // Testing the fromError$$$ method
   test("fromError$$$ should create an ErrorResult from a standard Error", () => {
     const standardError = new Error("Standard Error");
-    const result = ErrorResult.fromError$$$(standardError);
+    const result = ErrorResult.fromError(standardError);
     expect(isErrorResult(result)).toBeTruthy();
     if (isErrorResult(result)) {
-      expect(result.errorStack).toEqual([ standardError ]);
+      expect(result._errorStack).toEqual([ standardError ]);
     }
   });
 
   // Testing the fromExistingResult$$$ method
   test("fromExistingResult$$$ should return the existing ErrorResult if no internal methods are in the errorStack", () => {
-    const existingError = ErrorResult.new$$$();
-    const result = ErrorResult.fromExistingResult$$$(existingError);
+    const existingError = ErrorResult.new();
+    const result = ErrorResult.fromExistingResult(existingError);
     expect(JSON.stringify(result)).toEqual(JSON.stringify({ "_isErrorResult": true,"errorStack": [ {},{} ],"name": "Error" }));
   });
 
@@ -39,12 +39,12 @@ describe("ErrorResult", () => {
   // Testing the new$$$ method
   test("new$$$ should create a new ErrorResult with the provided errors", () => {
     const error1 = new Error("Error 1");
-    const error2 = ErrorResult.new$$$();
+    const error2 = ErrorResult.new();
     expect(isErrorResult(error2)).toBeTruthy();
-    const result = ErrorResult.new$$$(error1, error2);
+    const result = ErrorResult.new(error1, error2);
     expect(isErrorResult(result)).toBeTruthy();
     if (isErrorResult(result) && isErrorResult(error2)) {
-      expect(result.errorStack).toEqual([ error1, ...error2.errorStack ]);
+      expect(result._errorStack).toEqual([ error1, ...error2._errorStack ]);
     }
   });
 

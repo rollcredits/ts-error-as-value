@@ -32,25 +32,25 @@ export const err = <E extends Error>(
   if (isErrorResult(error)) {
     return {
       data: null as never,
-      error: ErrorResult.fromExistingResult$$$(error),
+      error: ErrorResult.fromExistingResult(error),
       get errorStack() {
-        return error.errorStack;
+        return error._errorStack;
       },
       unwrap(): void {
         throw error;
       },
       mapErr<E2 extends Error>(fn: (err: E) => E2): Err<None, E2> {
-        return err<E2>(ErrorResult.new$$$(error, fn(error))) as Err<None, E2>;
+        return removeLastErrorStackItem(err<E2>(ErrorResult.new(error, fn(error))));
       },
       unwrapOr<D>(defaultValue: D): D {
         return defaultValue;
       },
       andThen(): Err<None, E> {
-        return err(error);
+        return this;
       }
     };
   }
-  const errorResult = ErrorResult.fromError$$$(error);
+  const errorResult = ErrorResult.fromError(error);
   return {
     data: null as never,
     error: errorResult,
@@ -58,19 +58,19 @@ export const err = <E extends Error>(
       if (!isErrorResult(errorResult)) {
         return [];
       }
-      return errorResult.errorStack;
+      return errorResult._errorStack;
     },
     unwrap() {
       throw error;
     },
     mapErr<E2 extends Error>(fn: (err: E) => E2): Err<None, E2> {
-      return err(ErrorResult.new$$$(error, fn(error))) as Err<None, E2>;
+      return removeLastErrorStackItem(err<E2>(ErrorResult.new(error, fn(error))));
     },
     unwrapOr<D>(defaultValue: D): D {
       return defaultValue;
     },
     andThen(): Err<None, E> {
-      return err(error);
+      return this;
     }
   };
 };
@@ -87,7 +87,7 @@ export const ok = <T>(
     return data;
   },
   mapErr(): Ok<T> {
-    return ok(data);
+    return this;
   },
   unwrapOr(): T {
     return data;
@@ -97,25 +97,11 @@ export const ok = <T>(
   }
 });
 
-class NewError extends Error {}
-
-const fnWithResult = (): Result<string, Error> => {
-  if ("" !== "") {
-    return ok("hello");
+const removeLastErrorStackItem = <T, E extends Error>(result: Err<T, E>): Err<T, E> => {
+  if (result.error) {
+    const newErrorResult: any = { ...result.error };
+    newErrorResult._errorStack = newErrorResult._errorStack.slice(0, -1);
+    return { ...result, error: newErrorResult };
   }
-  return err(new Error("Method failed"));
-};
-
-const callsFnThatCallsFnWithResult = async (): Promise<Result<boolean, NewError>> => {
-  const { data, error } = fnWithResult()
-    // Error will be an instance of NewError if fnWithResult returns an error
-    .mapErr(error => new NewError("Failed to call fnWithResult"))
-    // Data will be boolean if fnWithResult returns a value.
-    .andThen(data => {
-      return data === "hello";
-    });
-  if (error) {
-    return err(error);
-  }
-  return ok(data);
+  return result;
 };

@@ -33,7 +33,7 @@ describe("Result", () => {
       const { error } = errorInstance.mapErr(() => newError);
       expect(isErrorResult(error)).toBeTruthy();
       if (isErrorResult(error)) {
-        expect(error.errorStack[error.errorStack.length - 1].message).toBe(newError.message);
+        expect(error._errorStack[error._errorStack.length - 1].message).toBe(newError.message);
       }
     });
 
