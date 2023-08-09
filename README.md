@@ -142,29 +142,27 @@ if (error) {
 ## API
 
 ```typescript
-type None = null;
-
-type Fail<T, E extends Error = Error> = {
-  data: never,
+export type Fail<E extends Error = Error> = {
+  data: null,
   error: E,
   unwrap(): void, // Returns the value, but throws an error if the result is an Error
   unwrapOr<D>(defaultValue: D): D, // Returns the value or gives you a default value if it's an error
-  mapErr<E2 extends Error>(fn: (err: E) => E2): Err<T, E2>, // If the result is an error, map the error to another error
-  andThen<N>(fn: (data: never) => N): Err<T, E> // If the result is not an error, map the data in it
+  mapFail<E2 extends Error>(fn: (fail: E) => E2): Fail<E2>, // If the result is an error, map the error to another error
+  andThen<N>(fn: (data: never) => N): Fail<E> // If the result is not an error, map the data in it
 };
 
-type Ok<T> = {
+export type Ok<T> = {
   data: T,
-  error: never,
+  error: null,
   unwrap(): T, // Returns the value, but throws an error if the result is an Error
   unwrapOr<D>(defaultValue: D): T, // Returns the value or gives you a default value if it's an error
-  mapErr<E2 extends Error>(fn: (err: never) => E2): Ok<T>, // If the result is an error, map the error to another error
+  mapFail<E2 extends Error>(fn: (fail: never) => E2): Ok<T>, // If the result is an error, map the error to another error
   andThen<N>(fn: (data: T) => N): Ok<N> // If the result is not an error, map the data in it
 };
 
-type Result<T, E extends Error = ErrorResult> = 
-  | Fail<T, E>
-  | Ok<T>;
+export type Result<
+  T, E extends Error = Error
+> = Fail<E> | Ok<T>;
 
 ```
 
