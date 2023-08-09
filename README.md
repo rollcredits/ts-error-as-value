@@ -139,27 +139,6 @@ if (error) {
 
 ---
 
-## Error stack
-One advantage of using errors as values is that we know exactly where an error was created and by whom. Taking advantage of this is still a WiP, however currently we keep track of information about all errors which we encountered in the current chain of Fail results.
-
-```ts
-
-const fn1 = () => fail(new Error("Hello"));
-
-const fn2 = () => fn1().mapErr(() => new Error("World"));
-
-const { errorStack } = fn2();
-```
-would produce
-```json
- [
-   { "message": "Hello", "stack": "..." },
-   { "message": "World", "stack": "..." }
- ]
-```
-
----
-
 ## API
 
 ```typescript
