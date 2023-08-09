@@ -5,9 +5,9 @@ Any error-as-values library in typescript is liable for being used *a lot* withi
 
 The alternative typescript libraries for achieving errors-as-values all seem to have verbose and cumbersome APIs, often wrapping all returns with class instances, and asking you to call method on them such as "isOk" or "isErr" to function.
 
-Instead of this, we leverage typescript's discriminated unions to handle most of the heavy lifting for us. This greatly (in our opinion) reduces how cumbersome the API is to use.
+Instead of this, we leverage typescript's discriminated unions to handle most of the heavy lifting for us.
 
-To further decrease friction for using this in your project, We have also included the ability to import the functions and types of this package into your project's global scope.
+To further decrease friction for using this in your project, you can also import the functions and types of this package into your project's global scope in a convenient way.
 
 ---
 
