@@ -24,12 +24,12 @@ yarn install ts-error-as-value
 ```ts
 import "ts-error-as-value/lib/globals";
 ```
-This will make the functions ok, err and withResult, as well as the types Ok, Err and Result globally available
+This will make the functions ok, fail and withResult, as well as the types Ok, Fail and Result globally available
 
 ---
 
-## ok and err - Basic Usage
-Creating `Ok` and `Err` result objects
+## ok and fail - Basic Usage
+Creating `Ok` and `Fail` result objects
 ```ts
 const { data, error } = ok("Hello");
 if (error) {
@@ -40,7 +40,7 @@ if (error) {
 ```
 or
 ```ts
-const { data, error } = err(new Error("Error"));
+const { data, error } = fail(new Error("Error"));
 if (error) {
   // do something with error
 } else {
@@ -49,14 +49,14 @@ if (error) {
 ```
 ---
 
-Wrapping the returns from functions with `err` for errors, and `ok` for non-error so that the function calling it receives a `Result` type.
+Wrapping the returns from functions with `fail` for errors, and `ok` for non-error so that the function calling it receives a `Result` type.
 
 ```ts
 const fnWithResult = (): Result<string, Error> => {
   if ("" !== "") {
     return ok("hello");
   }
-  return err(new Error("Method failed"));
+  return fail(new Error("Method failed"));
 };
 
 const { data, error } = fnWithResult();
@@ -75,13 +75,13 @@ const fnWithResult = async (): Promise<Result<string, Error>> => {
   if ("" !== "") {
     return ok("hello");
   }
-  return err(new Error("Method failed"));
+  return fail(new Error("Method failed"));
 };
 
 const callsFnThatCallsFnWithResult = async () => {
   const { data, error, errorStack } = (await fnWithResult())
   if (error) {
-    return err(error);
+    return fail(error);
   }
   return ok(data);
 };
@@ -100,7 +100,7 @@ const fnWithResult = (): Result<string, Error> => {
   if ("" !== "") {
     return ok("hello");
   }
-  return err(new Error("Method failed"));
+  return fail(new Error("Method failed"));
 };
 
 const callsFnThatCallsFnWithResult = async (): Promise<Result<boolean, NewError>> => {
@@ -112,7 +112,7 @@ const callsFnThatCallsFnWithResult = async (): Promise<Result<boolean, NewError>
       return data === "hello";
     });
   if (error) {
-    return err(error);
+    return fail(error);
   }
   return ok(data);
 };
@@ -140,11 +140,11 @@ if (error) {
 ---
 
 ## Error stack
-One advantage of using errors as values is that we know exactly where an error was created and by whom. Taking advantage of this is still a WiP, however currently we keep track of information about all errors which we encountered in the current chain of Err results.
+One advantage of using errors as values is that we know exactly where an error was created and by whom. Taking advantage of this is still a WiP, however currently we keep track of information about all errors which we encountered in the current chain of Fail results.
 
 ```ts
 
-const fn1 = () => err(new Error("Hello"));
+const fn1 = () => fail(new Error("Hello"));
 
 const fn2 = () => fn1().mapErr(() => new Error("World"));
 
@@ -165,10 +165,9 @@ would produce
 ```typescript
 type None = null;
 
-type Err<T, E extends Error = Error> = {
+type Fail<T, E extends Error = Error> = {
   data: never,
   error: E,
-  get errorStack(): Error[],
   unwrap(): void, // Returns the value, but throws an error if the result is an Error
   unwrapOr<D>(defaultValue: D): D, // Returns the value or gives you a default value if it's an error
   mapErr<E2 extends Error>(fn: (err: E) => E2): Err<T, E2>, // If the result is an error, map the error to another error
@@ -178,7 +177,6 @@ type Err<T, E extends Error = Error> = {
 type Ok<T> = {
   data: T,
   error: never,
-  get errorStack(): never,
   unwrap(): T, // Returns the value, but throws an error if the result is an Error
   unwrapOr<D>(defaultValue: D): T, // Returns the value or gives you a default value if it's an error
   mapErr<E2 extends Error>(fn: (err: never) => E2): Ok<T>, // If the result is an error, map the error to another error
@@ -186,13 +184,13 @@ type Ok<T> = {
 };
 
 type Result<T, E extends Error = ErrorResult> = 
-  | Err<T, E>
+  | Fail<T, E>
   | Ok<T>;
 
 ```
 
 ```ts
-function err<E extends Error>(error: E): Err<E>;
+function fail<E extends Error>(error: E): Fail<E>;
 function ok<T>(data: T): Ok<T>;
 ```
 

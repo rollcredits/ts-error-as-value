@@ -1,11 +1,10 @@
 
 type Ok<T> = import(".").Ok<T>;
-type Err<E extends Error> = import(".").Err<E>;
-type None = import(".").None;
+type Fail<E extends Error> = import(".").Fail<E>;
 type Result<T, E extends Error> = import(".").Result<T, E>;
 
 declare function ok<T>(data: T): Ok<T>;
-declare function err<E extends Error>(error: E): Err<E>
+declare function fail<E extends Error>(error: E): Fail<E>
 declare function withResult<T, E extends Error, R>(
   fn: (...args: T[]) => R
 ): (

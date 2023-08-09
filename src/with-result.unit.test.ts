@@ -23,7 +23,7 @@ describe("withResult", () => {
       expect(JSON.stringify(wrapped(1))).toStrictEqual(JSON.stringify(ok(2)));
     });
 
-    it("should return Err for errors", () => {
+    it("should return Fail for errors", () => {
       const errorFunc = (): Result<null, Error> => {
         throw new Error("Oops!");
       };
@@ -41,7 +41,7 @@ describe("withResult", () => {
       expect(JSON.stringify(result)).toEqual(JSON.stringify(ok(2)));
     });
 
-    it("should return Err for rejected promises", async () => {
+    it("should return Fail for rejected promises", async () => {
       const errorAsyncFunc = async () => {
         throw new Error("Oops async!");
       };

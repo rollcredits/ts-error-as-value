@@ -1,23 +1,14 @@
-import { err, Err, Ok, ok } from "../src";
-import { isErrorResult } from "./error-result";
+import { fail, Fail, Result, Ok, ok } from "../src";
 
 
 describe("Result", () => {
 
-  describe("Err type", () => {
-    let errorInstance: Err<null>;
+  describe("Fail type", () => {
+    let errorInstance: Result<string, Error>;
     const testError = new Error("Test error");
 
     beforeEach(() => {
-      errorInstance = err(testError);
-    });
-
-    it("should return error for Err type", () => {
-      expect(isErrorResult(errorInstance.error)).toBeTruthy();
-    });
-
-    it("should return error stack for Err type", () => {
-      expect(errorInstance.errorStack).toEqual(expect.arrayContaining([ testError ]));
+      errorInstance = fail(testError);
     });
 
     it("should throw error on unwrap for Err type", () => {
@@ -30,10 +21,9 @@ describe("Result", () => {
 
     it("should map error using mapErr for Err type", () => {
       const newError = new Error("New error");
-      const { error } = errorInstance.mapErr(() => newError);
-      expect(isErrorResult(error)).toBeTruthy();
-      if (isErrorResult(error)) {
-        expect(error._errorStack[error._errorStack.length - 1].message).toBe(newError.message);
+      const { error } = errorInstance.mapFail(() => newError);
+      if (error) {
+        expect(error.message).toBe(newError.message);
       }
     });
 
@@ -68,7 +58,7 @@ describe("Result", () => {
     });
 
     it("should return itself on mapErr for Ok type", () => {
-      const result = okInstance.mapErr(() => new Error("New error"));
+      const result = okInstance.mapFail(() => new Error("New error"));
       expect(JSON.stringify(result)).toEqual(JSON.stringify(okInstance));
     });
 
