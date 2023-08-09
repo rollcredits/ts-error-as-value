@@ -24,24 +24,22 @@ export type Result<
 
 export const fail = <E extends Error>(
   error: E
-): Fail<E> => {
-  return {
-    data: null,
-    error: error,
-    unwrap() {
-      throw error;
-    },
-    mapFail<E2 extends Error>(fn: (err: E) => E2): Fail<E2> {
-      return fail<E2>(fn(error));
-    },
-    unwrapOr<D>(defaultValue: D): D {
-      return defaultValue;
-    },
-    andThen(): Fail<E> {
-      return this;
-    }
-  };
-};
+): Fail<E> => ({
+  data: null,
+  error: error,
+  unwrap() {
+    throw error;
+  },
+  mapFail<E2 extends Error>(fn: (err: E) => E2): Fail<E2> {
+    return fail<E2>(fn(error));
+  },
+  unwrapOr<D>(defaultValue: D): D {
+    return defaultValue;
+  },
+  andThen(): Fail<E> {
+    return this;
+  }
+});
 
 export const ok = <T>(
   data: T
