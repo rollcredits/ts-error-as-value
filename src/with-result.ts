@@ -1,4 +1,4 @@
-import { fail, ok, Result, Ok, Fail } from "./index";
+import { ResultIs, Result, Success, Failure } from "./index";
 
 export const isPromise = <T>(value: T | Promise<T>): value is Promise<T> =>
   (value as any).then != null;
@@ -14,13 +14,13 @@ export const withResult = <T, E extends Error, R>(
     const data = fn(...args);
     if (isPromise(data)) {
       return data
-        .then(value => ok(value) as Ok<typeof value>)
-        .catch(e => fail(e) as Fail<E>) as (R extends Promise<infer u> ? Promise<Result<u, E>> : Result<R, E>);
+        .then(value => ResultIs.success(value) as Success<typeof value>)
+        .catch(e => ResultIs.failure(e) as Failure<E>) as (R extends Promise<infer u> ? Promise<Result<u, E>> : Result<R, E>);
     }
-    return ok(data) as any;
+    return ResultIs.success(data) as any;
   } catch (error) {
     const e = error instanceof Error ? error : new Error("Unknown error");
-    return fail(e) as any;
+    return ResultIs.failure(e) as any;
   }
 };
 
