@@ -1,62 +1,71 @@
 
 
-export type Fail<E extends Error = Error> = {
+export type Failure<E extends Error = Error> = {
   data: null,
   error: E,
-  unwrap(): void, // Returns the value, but throws an error if the result is an Error
-  unwrapOr<D>(defaultValue: D): D, // Returns the value or gives you a default value if it's an error
-  mapFail<E2 extends Error>(fn: (fail: E) => E2): Fail<E2>, // If the result is an error, map the error to another error
-  andThen<N>(fn: (data: never) => N): Fail<E> // If the result is not an error, map the data in it
+  successOrThrow(): void, // Returns the value, but throws an error if the result is an Error
+  successOrDefault<D>(defaultValue: D): D, // Returns the value or gives you a default value if it's an error
+  transformOnFailure<E2 extends Error>(fn: (fail: E) => E2): Failure<E2>, // If the result is an error, map the error to another error
+  transformOnSuccess<N>(fn: (data: never) => N): Failure<E> // If the result is not an error, map the data in it
 };
 
-export type Ok<T> = {
+export type Success<T> = {
   data: T,
   error: null,
-  unwrap(): T, // Returns the value, but throws an error if the result is an Error
-  unwrapOr<D>(defaultValue: D): T, // Returns the value or gives you a default value if it's an error
-  mapFail<E2 extends Error>(fn: (fail: never) => E2): Ok<T>, // If the result is an error, map the error to another error
-  andThen<N>(fn: (data: T) => N): Ok<N> // If the result is not an error, map the data in it
+  successOrThrow(): T, // Returns the value, but throws an error if the result is an Error
+  successOrDefault<D>(defaultValue: D): T, // Returns the value or gives you a default value if it's an error
+  transformOnFailure<E2 extends Error>(fn: (fail: never) => E2): Success<T>, // If the result is an error, map the error to another error
+  transformOnSuccess<N>(fn: (data: T) => N): Success<N> // If the result is not an error, map the data in it
 };
 
 export type Result<
   T, E extends Error = Error
-> = Fail<E> | Ok<T>;
+> = Failure<E> | Success<T>;
 
-export const fail = <E extends Error>(
+const failure = <E extends Error>(
   error: E
-): Fail<E> => ({
+): Failure<E> => ({
   data: null,
   error: error,
-  unwrap() {
+  successOrThrow() {
     throw error;
   },
-  mapFail<E2 extends Error>(fn: (err: E) => E2): Fail<E2> {
-    return fail<E2>(fn(error));
-  },
-  unwrapOr<D>(defaultValue: D): D {
+  successOrDefault<D>(defaultValue: D): D {
     return defaultValue;
   },
-  andThen(): Fail<E> {
+  transformOnFailure<E2 extends Error>(fn: (err: E) => E2): Failure<E2> {
+    return failure<E2>(fn(error));
+  },
+  transformOnSuccess(): Failure<E> {
     return this;
+  }
+});
+const success = <T>(
+  data: T
+): Success<T> => ({
+  data,
+  error: null,
+  successOrThrow(): T {
+    return data;
+  },
+  successOrDefault(): T {
+    return data;
+  },
+  transformOnFailure(): Success<T> {
+    return this;
+  },
+  transformOnSuccess<N>(fn: (data: T) => N): Success<N> {
+    return success(fn(data));
   }
 });
 
-export const ok = <T>(
-  data: T
-): Ok<T> => ({
-  data,
-  error: null,
-  unwrap(): T {
-    return data;
-  },
-  mapFail(): Ok<T> {
-    return this;
-  },
-  unwrapOr(): T {
-    return data;
-  },
-  andThen<N>(fn: (data: T) => N): Ok<N> {
-    return ok(fn(data));
-  }
-});
+export type ResultIs = {
+  success<T>(data: T): Success<T>,
+  failure<E extends Error>(failure: E): Failure<E>
+};
+
+export const ResultIs: ResultIs = {
+  success,
+  failure
+};
 
