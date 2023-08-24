@@ -23,6 +23,7 @@
     "strict": true,
     "target": "es5",
     "declaration": true,
+    "strictNullChecks": true,
     "typeRoots": [
       "./types",
       "./node_modules/@types"
