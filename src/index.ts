@@ -44,7 +44,7 @@ function failure<E extends Error>(
 }
 
 function success(): Success;
-function success<T>(data: T): Success<T>;
+function success<T>(data?: T): Success<T>;
 function success<T = void>(
   data: T = undefined as T
 ): Success<T> {
@@ -67,7 +67,7 @@ function success<T = void>(
 }
 
 export type ResultIs = {
-  success<T>(data: T): Success<T>,
+  success<T>(data?: T): Success<T>,
   failure<E extends Error>(failure: E): Failure<E>
 };
 
