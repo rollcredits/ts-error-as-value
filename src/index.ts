@@ -1,12 +1,15 @@
 
 
-export type Failure<E extends Error = Error> = {
+export type Failure<
+  T = void,
+  E extends Error = Error
+> = {
   data: null,
   error: E,
-  successOrThrow(): void, // Returns the value, but throws an error if the result is an Error
+  successOrThrow(): T, // Returns the value, but throws an error if the result is an Error
   successOrDefault<D>(defaultValue: D): D, // Returns the value or gives you a default value if it's an error
-  transformOnFailure<E2 extends Error>(fn: (fail: E) => E2): Failure<E2>, // If the result is an error, map the error to another error
-  transformOnSuccess<N>(fn: (data: never) => N): Failure<E> // If the result is not an error, map the data in it
+  transformOnFailure<E2 extends Error>(fn: (fail: E) => E2): Failure<T, E2>, // If the result is an error, map the error to another error
+  transformOnSuccess<N>(fn: (data: never) => N): Failure<T, E> // If the result is not an error, map the data in it
 };
 
 export type Success<T = void> = {
@@ -20,24 +23,27 @@ export type Success<T = void> = {
 
 export type Result<
   T = void, E extends Error = Error
-> = Failure<E> | Success<T>;
+> = Failure<T, E> | Success<T>;
 
-function failure<E extends Error>(
+function failure<
+  T = void,
+  E extends Error = Error
+>(
   error: E
-): Failure<E> {
+): Failure<T, E> {
   return {
     data: null,
     error: error,
-    successOrThrow() {
+    successOrThrow(): never {
       throw error;
     },
     successOrDefault<D>(defaultValue: D): D {
       return defaultValue;
     },
-    transformOnFailure<E2 extends Error>(fn: (err: E) => E2): Failure<E2> {
-      return failure<E2>(fn(error));
+    transformOnFailure<E2 extends Error>(fn: (err: E) => E2): Failure<T, E2> {
+      return failure<T, E2>(fn(error));
     },
-    transformOnSuccess(): Failure<E> {
+    transformOnSuccess(): Failure<T, E> {
       return this;
     }
   };
@@ -68,7 +74,7 @@ function success<T = void>(
 
 export type ResultIs = {
   success<T>(data?: T): Success<T>,
-  failure<E extends Error>(failure: E): Failure<E>
+  failure<T = void, E extends Error = Error>(failure: E): Failure<T, E>
 };
 
 export const ResultIs: ResultIs = {
