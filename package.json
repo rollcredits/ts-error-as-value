@@ -1,13 +1,13 @@
 {
   "name": "ts-error-as-value",
-  "version": "0.2.3",
+  "version": "0.3.11",
   "description": "Errors as values in typescript",
   "main": "lib/index.js",
   "keywords": ["result", "option", "rust", "kotlin", "errors", "errors as values", "typescript"],
   "types": "lib/index.d.ts",
   "scripts": {
     "preinstall": "npx only-allow yarn && npx rimraf lib",
-    "start": "node --require ts-node/register --require @babel/register src/index.ts",
+    "start": "node --require ts-node/register --require @babel/register src/types-scratch-board.ts",
     "test": "jest",
     "postinstall": "npx tsc && node cp.js"
   },

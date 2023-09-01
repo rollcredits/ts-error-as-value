@@ -74,7 +74,7 @@ function success<T = void>(
 
 export type ResultIs = {
   success<T>(data?: T): Success<T>,
-  failure<T = void, E extends Error = Error>(failure: E): Failure<T, E>
+  failure<E extends Error = Error>(failure: E): Failure<any extends infer u ? u : never, E>
 };
 
 export const ResultIs: ResultIs = {
