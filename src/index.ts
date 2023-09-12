@@ -1,3 +1,4 @@
+export { withResult } from "./with-result";
 
 
 export type Failure<
