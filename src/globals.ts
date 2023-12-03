@@ -3,8 +3,14 @@ import { withResult } from "./with-result";
 import { partitionResults } from "./partition-results";
 
 const ResultIs = {
-  success: ok,
-  failure: err
+  success: (...args: any[]) => {
+    console.warn("ResultIs.success is deprecated and will be removed in a later update. Use ok instead.");
+    return (ok as any)(...args);
+  },
+  failure: (...args: any[]) => {
+    console.warn("ResultIs.failure is deprecated and will be removed in a later update. Use err instead.");
+    return (err as any)(...args);
+  }
 };
 
 if (typeof window !== "undefined") {
