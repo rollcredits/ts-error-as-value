@@ -30,7 +30,7 @@ declare function withResult<
   ...args: Parameters<F>
 ) => ReturnType<F> extends Promise<infer u> ? Promise<Result<u, E>> : Result<ReturnType<F>, E>;
 
-export interface PartitionedResults<T, E extends Error> {
+interface PartitionedResults<T, E extends Error> {
   data: T[],
   errors: AggregateError | E | null
 }
