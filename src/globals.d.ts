@@ -29,3 +29,24 @@ declare function withResult<
 ): (
   ...args: Parameters<F>
 ) => ReturnType<F> extends Promise<infer u> ? Promise<Result<u, E>> : Result<ReturnType<F>, E>;
+
+export interface PartitionedResults<T, E extends Error> {
+  data: T[],
+  errors: AggregateError | E | null
+}
+
+declare function partitionResults<T, E extends Error>(
+  results: Result<T, E>[]
+): PartitionedResults<T, E>;
+
+declare function partitionResults<T, E extends Error>(
+  results: Promise<Result<T, E>[]>
+): Promise<PartitionedResults<T, E>>;
+
+declare function partitionResults<T, E extends Error>(
+  results: Promise<Result<T, E>>[]
+): Promise<PartitionedResults<T, E>>;
+
+declare function partitionResults<T, E extends Error>(
+  results: Result<T, E>[]
+): PartitionedResults<T, E>;

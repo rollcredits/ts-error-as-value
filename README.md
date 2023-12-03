@@ -140,6 +140,35 @@ if (error) {
 
 ---
 
+## partitionResults
+When you have an array of results, we need a convenient way to split the errors from the successes.
+This is what `partitionResults` is for. It takes in an array of Results, an array of promises or
+results, or a promise of an array of results, and returns an object with the data and errors split into two arrays.
+
+If there is more than one error found, it will return an instance of the native [AggregateError](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AggregateError).
+
+If there is only one error, it will return the error itself.
+
+If there are no errors, the errors property will be null.
+
+```ts
+const arrayOfResults: Result<string>[] = [ ok("hello"), err(new Error("oops")) ];
+const { data, errors } = partitionResults(arrayOfResults);
+// data: [ "hello" ]
+// errors: Error: oops
+
+const promiseOfArrayOfResults: Promise<Result<string>[]> = Promise.resolve([ ok("hello"), err(new Error("oops")) ]);
+const { data, errors } = await partitionResults(promiseOfArrayOfResults);
+// data: [ "hello" ]
+// errors: Error: oops
+
+const arrayOfPromisesOfResults: Promise<Result<string>>[] = [ Promise.resolve(ok("hello")), Promise.resolve(err(new Error("oops"))) ];
+const { data, errors } = await partitionResults(promiseOfArrayOfResults);
+// data: [ "hello" ]
+// errors: Error: oops
+```
+---
+
 ## API
 
 ```typescript
@@ -174,18 +203,38 @@ declare function err<E extends Error>(error: E): Failure<E>;
 
 ```ts
 // When the wrapped function returns a promise
-function withResult<T, E extends Error, R>(
+declare function withResult<T, E extends Error, R>(
   fn: (...args: T[]) => Promise<R>
 ): (
   ...args: T[]
 ) => Promise<Result<R, E>>
 
 // When the wrapped function does not return a promise
-function withResult<T, E extends Error, R>(
+declare function withResult<T, E extends Error, R>(
   fn: (...args: T[]) => R
 ): (
   ...args: T[]
 ) => Result<R, E>
+```
+
+```ts
+
+declare interface PartitionedResults<T, E extends Error> {
+  data: T[],
+  errors: AggregateError | E | null
+}
+
+declare function partitionResults<T, E extends Error>(
+  results: Result<T, E>[]
+): PartitionedResults<T, E>;
+
+declare function partitionResults<T, E extends Error>(
+  results: Promise<Result<T, E>[]>
+): Promise<PartitionedResults<T, E>>;
+
+declare function partitionResults<T, E extends Error>(
+  results: Promise<Result<T, E>>[]
+): Promise<PartitionedResults<T, E>>;
 ```
 ---
 
