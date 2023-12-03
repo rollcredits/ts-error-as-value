@@ -26,7 +26,7 @@ export type Result<
   T = void, E extends Error = Error
 > = Failure<T, E> | Success<T>;
 
-function failure<
+export function err<
   T = void,
   E extends Error = Error
 >(
@@ -42,7 +42,7 @@ function failure<
       return defaultValue;
     },
     transformOnFailure<E2 extends Error>(fn: (err: E) => E2): Failure<T, E2> {
-      return failure<T, E2>(fn(error));
+      return err<T, E2>(fn(error));
     },
     transformOnSuccess(): Failure<T, E> {
       return this;
@@ -50,9 +50,9 @@ function failure<
   };
 }
 
-function success(): Success;
-function success<T>(data?: T): Success<T>;
-function success<T = void>(
+export function ok(): Success;
+export function ok<T>(data?: T): Success<T>;
+export function ok<T = void>(
   data: T = undefined as T
 ): Success<T> {
   return {
@@ -68,18 +68,8 @@ function success<T = void>(
       return this;
     },
     transformOnSuccess<N>(fn: (data: T) => N): Success<N> {
-      return success(fn(data as T));
+      return ok(fn(data as T));
     }
   };
 }
-
-export type ResultIs = {
-  success<T>(data?: T): Success<T>,
-  failure<E extends Error = Error>(failure: E): Failure<any extends infer u ? u : never, E>
-};
-
-export const ResultIs: ResultIs = {
-  success,
-  failure
-};
 
