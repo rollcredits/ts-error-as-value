@@ -1,4 +1,4 @@
-import { ResultIs, Failure, Result, Success } from "../src";
+import { ok, err, Failure, Result, Success } from "../src";
 
 
 describe("Result", () => {
@@ -8,7 +8,7 @@ describe("Result", () => {
     const testError = new Error("Test error");
 
     beforeEach(() => {
-      errorInstance = ResultIs.failure(testError);
+      errorInstance = err(testError);
     });
 
     it("should throw error on unwrap for Err type", () => {
@@ -38,7 +38,7 @@ describe("Result", () => {
     const testData = "test data";
 
     beforeEach(() => {
-      okInstance = ResultIs.success(testData);
+      okInstance = ok(testData);
     });
 
     it("should return data for Ok type", () => {
@@ -65,7 +65,7 @@ describe("Result", () => {
     it("should execute andThen and return new Ok type", () => {
       const newValue = "new value";
       const result = okInstance.transformOnSuccess(() => newValue);
-      expect(JSON.stringify(result)).toEqual(JSON.stringify(ResultIs.success(newValue)));
+      expect(JSON.stringify(result)).toEqual(JSON.stringify(ok(newValue)));
       expect(result.data).toBe(newValue);
     });
   });

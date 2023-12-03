@@ -37,6 +37,7 @@
   "exclude": [
     "node_modules",
     "./types",
-    "src/**/*.unit.test.ts"
+    "src/**/*.unit.test.ts",
+    "src/types-scratch-board.ts"
   ]
 }

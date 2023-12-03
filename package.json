@@ -1,6 +1,6 @@
 {
   "name": "ts-error-as-value",
-  "version": "0.3.12",
+  "version": "0.4.01",
   "description": "Errors as values in typescript",
   "main": "lib/index.js",
   "keywords": ["result", "option", "rust", "kotlin", "errors", "errors as values", "typescript"],
@@ -28,7 +28,6 @@
     "@typescript-eslint/parser": "^5.39.0",
     "eslint": "^8.25.0",
     "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-jsdoc": "^39.3.6",
     "eslint-plugin-no-null": "^1.0.2",
     "jest": "^29.2.0",
     "prettier": "^2.7.1",

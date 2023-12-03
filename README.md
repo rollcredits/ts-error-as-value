@@ -22,14 +22,14 @@ yarn install ts-error-as-value
 ```ts
 import "ts-error-as-value/lib/globals";
 ```
-This will make the functions ResultIs.success, ResultIs.failure and withResult, as well as the types Success, Failure and Result globally available
+This will make the functions ok, err and withResult, as well as the types Success, Failure and Result globally available
 
 ---
 
-## ResultIs.success and ResultIs.failure - Basic Usage
+## ok and err - Basic Usage
 Creating `Success` and `Failure` result objects
 ```ts
-const { data, error } = ResultIs.success("Hello");
+const { data, error } = ok("Hello");
 if (error) {
   // do something with error
 } else {
@@ -40,7 +40,7 @@ or
 
 ```ts
 
-const {data, error} = ResultIs.failure(new Error("Error"));
+const {data, error} = err(new Error("Error"));
 if (error) {
  // do something with error
 } else {
@@ -49,15 +49,15 @@ if (error) {
 ```
 ---
 
-Wrapping the returns from functions with `ResultIs.failure` for errors, and `ResultIs.success` for non-error so that the function calling it receives a `Result` type.
+Wrapping the returns from functions with `err` for errors, and `ok` for non-error so that the function calling it receives a `Result` type.
 
 ```ts
 // Specifying the return type here is optional, as it will be inferred without it
 const fnWithResult = (): Result<string, Error> => {
   if ("" !== "") {
-    return ResultIs.success("hello");
+    return ok("hello");
   }
-  return ResultIs.failure(new Error("Method failed"));
+  return err(new Error("Method failed"));
 };
 
 const { data, error } = fnWithResult();
@@ -74,17 +74,17 @@ Or with promises:
 ```ts
 const fnWithResult = async (): Promise<Result<string, Error>> => {
   if ("" !== "") {
-    return ResultIs.success("hello");
+    return ok("hello");
   }
-  return ResultIs.failure(new Error("Method failed"));
+  return err(new Error("Method failed"));
 };
 
 const callsFnThatCallsFnWithResult = async () => {
   const { data, error, errorStack } = (await fnWithResult())
   if (error) {
-    return ResultIs.failure(error);
+    return err(error);
   }
-  return ResultIs.success(data);
+  return ok(data);
 };
 
 callsFnThatCallsFnWithResult();
@@ -99,9 +99,9 @@ class NewError extends Error {}
 
 const fnWithResult = (): Result<string, Error> => {
   if ("" !== "") {
-    return ResultIs.success("hello");
+    return ok("hello");
   }
-  return ResultIs.failure(new Error("Method failed"));
+  return err(new Error("Method failed"));
 };
 
 const callsFnThatCallsFnWithResult = async (): Promise<Result<boolean, NewError>> => {
@@ -113,9 +113,9 @@ const callsFnThatCallsFnWithResult = async (): Promise<Result<boolean, NewError>
       return data === "hello";
     });
   if (error) {
-    return ResultIs.failure(error);
+    return err(error);
   }
-  return ResultIs.success(data);
+  return ok(data);
 };
 ```
 
@@ -168,10 +168,8 @@ export type Result<
 ```
 
 ```ts
-export type ResultIs = {
-  success<T>(data: T): Success<T>,
-  failure<E extends Error>(failure: E): Failure<E>
-};
+declare function ok<T = void>(data?: T): Success<T>;
+declare function err<E extends Error>(error: E): Failure<E>;
 ```
 
 ```ts
