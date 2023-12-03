@@ -73,3 +73,8 @@ export function ok<T = void>(
   };
 }
 
+export const ResultIs = {
+  success: ok,
+  failure: err
+};
+
