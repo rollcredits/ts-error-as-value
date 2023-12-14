@@ -1,6 +1,6 @@
 
 type Success<T> = import(".").Success<T>;
-type Failure<T, E extends Error> = import(".").Failure<T, any extends infer u ? u : never, E>;
+type Failure<E extends Error> = import(".").Failure<any extends infer u ? u : never, E>;
 type Result<T = void, E extends Error = Error> = import(".").Result<T, E>;
 
 declare function ok<T = void>(data?: T): Success<T>;
